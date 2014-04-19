@@ -1,4 +1,4 @@
-## cachematrix.R
+## cachematrix.R -- Assignment 2 of "R-programming" by Roger Peng, Coursera, John Hopkins.
 ## Computes a the inverse of special matrix-like object which is cached for
 ##      future computations.
 ## makeCacheMatrix: This function creates a special "matrix" object that can
@@ -16,9 +16,18 @@
 ## 4. get the value of the inverse
 
 makeCacheMatrix <- function(x = matrix()) {
-
+    inv <- NULL
+    set <- function(y) {
+        x <<- y
+        inv <<- NULL
+    }
+    get <- function() x
+    setmean <- function(inverse) inv <<- inverse
+    getmean <- function() inv
+    list(set = set, get = get,
+         setinv = setinv,
+         getinv = getinv)
 }
-
 
 ## The second function calculates the inverse of the special
 ## "matrix" created with the above function.
@@ -28,5 +37,14 @@ makeCacheMatrix <- function(x = matrix()) {
 ## and sets the inverse in the cache via the makeCacheMatrix function.
 
 cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
+    ## Return a matrix that is the inverse of 'x'
+    inv <- x$getinv()
+    if(!is.null(inv)) {
+        message("getting cached data")
+        return(inv)
+    }
+    data <- x$get()
+    inv <- solve(data, ...)
+    x$setinv(inv)
+    inv
 }
